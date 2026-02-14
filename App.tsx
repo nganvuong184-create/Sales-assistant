@@ -63,31 +63,28 @@ const App: React.FC = () => {
 });
 
 
-  const startSession = async () => {
-  try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-    inputAudioContextRef.current = new AudioContext({ sampleRate: 16000 });
-    outputAudioContextRef.current = new AudioContext({ sampleRate: 24000 });
-
-    // gọi mic
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    streamRef.current = stream;
-    console.log("Mic OK", stream);
-
-    // tạo session
-    const sessionPromise = ai.startRealtimeSession({
-      model: "gemini-1.5-flash",
-      inputAudioFormat: inputAudioContextRef.current.sampleRate,
-      outputAudioFormat: outputAudioContextRef.current.sampleRate,
-    });
-
-    sessionRef.current = await sessionPromise;
-
-  } catch (err: any) {
-    console.error("Mic error:", err.name, err.message);
-    alert("Mic error: " + err.name);
+  const sessionPromise = ai.live.connect({
+  model: 'gemini-2.5-flash-native-audio-preview-12-2025',
+  callbacks: {
+    onerror: (e) => console.error(e),
+    onclose: () => stopSession()
+  },
+  config: {
+    responseModalities: [Modality.AUDIO],
+    systemInstruction: SYSTEM_INSTRUCTION,
+    speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } } },
+    outputAudioTranscription: {},
+    inputAudioTranscription: {}
   }
+});
+
+sessionRef.current = await sessionPromise;
+
+} catch (e) {
+  alert("Mic error or API failure.");
+}
 };
+
 
 
 
