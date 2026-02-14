@@ -65,20 +65,26 @@ const App: React.FC = () => {
   };
 
   const startSession = async () => {
-   try {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-  inputAudioContextRef.current = new AudioContext({ sampleRate: 16000 });
-  outputAudioContextRef.current = new AudioContext({ sampleRate: 24000 });
+  try {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+    inputAudioContextRef.current = new AudioContext({ sampleRate: 16000 });
+    outputAudioContextRef.current = new AudioContext({ sampleRate: 24000 });
 
-  // gọi mic
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  streamRef.current = stream;
-  console.log("Mic OK", stream);
+    // gọi mic
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    streamRef.current = stream;
+    console.log("Mic OK", stream);
 
-} catch (err: any) {
-  console.error("Mic error:", err.name, err.message);
-  alert("Mic error: " + err.name);
-}
+    // nếu có thêm code xử lý session thì viết tiếp ở đây
+    sessionRef.current = await sessionPromise;
+
+  } catch (err: any) {
+    console.error("Mic error:", err.name, err.message);
+    alert("Mic error: " + err.name);
+  }
+};
+
+
 
       const sessionPromise = ai.live.connect({
         model: 'gemini-2.5-flash-native-audio-preview-12-2025',
