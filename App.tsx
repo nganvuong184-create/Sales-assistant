@@ -50,16 +50,7 @@ const App: React.FC = () => {
 const startSession = async () => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-    inputAudioContextRef.current = new AudioContext({ sampleRate: 16000 });
-    outputAudioContextRef.current = new AudioContext({ sampleRate: 24000 });
 
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    streamRef.current = stream;
-    console.log("Mic OK", stream);
-
-const startSession = async () => {
-  try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
     inputAudioContextRef.current = new AudioContext({ sampleRate: 16000 });
     outputAudioContextRef.current = new AudioContext({ sampleRate: 24000 });
 
@@ -76,7 +67,11 @@ const startSession = async () => {
       config: {
         responseModalities: [Modality.AUDIO],
         systemInstruction: SYSTEM_INSTRUCTION,
-        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } } },
+        speechConfig: {
+          voiceConfig: {
+            prebuiltVoiceConfig: { voiceName: 'Kore' }
+          }
+        },
         outputAudioTranscription: {},
         inputAudioTranscription: {}
       }
@@ -88,6 +83,7 @@ const startSession = async () => {
     alert("Mic error or API failure.");
   }
 };
+
 
 
 
