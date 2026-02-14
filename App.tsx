@@ -75,7 +75,7 @@ const App: React.FC = () => {
     streamRef.current = stream;
     console.log("Mic OK", stream);
 
-    // nếu có thêm code xử lý session thì viết tiếp ở đây
+    // xử lý session
     sessionRef.current = await sessionPromise;
 
   } catch (err: any) {
@@ -83,6 +83,7 @@ const App: React.FC = () => {
     alert("Mic error: " + err.name);
   }
 };
+
 
 
 
