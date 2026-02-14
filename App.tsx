@@ -75,7 +75,13 @@ const App: React.FC = () => {
     streamRef.current = stream;
     console.log("Mic OK", stream);
 
-    // xử lý session
+    // tạo session
+    const sessionPromise = ai.startRealtimeSession({
+      model: "gemini-1.5-flash",
+      inputAudioFormat: inputAudioContextRef.current.sampleRate,
+      outputAudioFormat: outputAudioContextRef.current.sampleRate,
+    });
+
     sessionRef.current = await sessionPromise;
 
   } catch (err: any) {
