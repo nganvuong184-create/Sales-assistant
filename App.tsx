@@ -85,23 +85,6 @@ const startSession = async () => {
 };
 
 
-
-
-
-
-
-
-     
-
-sessionRef.current = await sessionPromise;
-
-} catch (e) {
-  alert("Mic error or API failure.");
-}
-};
-
-
-
   const stopSession = () => {
     setIsSessionActive(false); setIsModelSpeaking(false); setIsUserSpeaking(false);
     if (sessionRef.current) sessionRef.current.close();
