@@ -47,22 +47,21 @@ const App: React.FC = () => {
     }
   };
 
-  const processOrderTag = (text: string) => {
-    const orderTag = '[ORDER]';
-    if (text.includes(orderTag)) {
-      const summary = text.split(orderTag)[1].trim();
-      if (summary) {
-        const newOrder = {
-          id: Math.random().toString(36).substr(2, 9),
-          vietnameseSummary: summary,
-          timestamp: new Date(),
-          status: 'pending' as const
-        };
-        // Chỉ giữ lại yêu cầu mới nhất để tránh nhầm lẫn cho chủ quán
-        setOrders([newOrder]);
-      }
-    }
-  };
+  const sessionPromise = ai.startRealtimeSession({
+  model: "gemini-1.5-flash",
+  inputAudioFormat: inputAudioContextRef.current.sampleRate,
+  outputAudioFormat: outputAudioContextRef.current.sampleRate,
+  onerror: (e) => console.error(e),
+  onclose: () => stopSession(),
+  config: {
+    responseModalities: [Modality.AUDIO],
+    systemInstruction: SYSTEM_INSTRUCTION,
+    speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } } },
+    outputAudioTranscription: {},
+    inputAudioTranscription: {}
+  }
+});
+
 
   const startSession = async () => {
   try {
@@ -155,12 +154,13 @@ const App: React.FC = () => {
           outputAudioTranscription: {}, inputAudioTranscription: {}
   }
 
-  sessionRef.current = await sessionPromise;
+sessionRef.current = await sessionPromise;
 
 } catch (e) {
   alert("Mic error or API failure.");
 }
 };
+
 
 
   const stopSession = () => {
