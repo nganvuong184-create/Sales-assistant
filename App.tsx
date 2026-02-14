@@ -91,67 +91,7 @@ const startSession = async () => {
 
 
 
-      const sessionPromise = ai.live.connect({
-        model: 'gemini-2.5-flash-native-audio-preview-12-2025',
-        callbacks: {
-          onopen: () => {
-            setIsSessionActive(true);
-            const source = inputAudioContextRef.current!.createMediaStreamSource(streamRef.current!);
-            const scriptProcessor = inputAudioContextRef.current!.createScriptProcessor(4096, 1, 1);
-            scriptProcessorRef.current = scriptProcessor;
-            scriptProcessor.onaudioprocess = (e) => {
-              if (!isMutedRef.current) {
-                const data = e.inputBuffer.getChannelData(0);
-                sessionPromise.then(s => s.sendRealtimeInput({ media: createBlob(data) }));
-                setIsUserSpeaking(data.reduce((a, v) => a + Math.abs(v), 0) / data.length > 0.01);
-              } else setIsUserSpeaking(false);
-            };
-            source.connect(scriptProcessor);
-            scriptProcessor.connect(inputAudioContextRef.current!.destination);
-          },
-          onmessage: async (m: LiveServerMessage) => {
-            if (m.serverContent?.outputTranscription) {
-              setCurrentTranscription(p => p + m.serverContent.outputTranscription!.text);
-            }
-            if (m.serverContent?.inputTranscription) {
-              setUserInputTranscription(p => p + m.serverContent.inputTranscription!.text);
-            }
-            const audio = m.serverContent?.modelTurn?.parts?.[0]?.inlineData?.data;
-            if (audio && outputAudioContextRef.current) {
-              setIsModelSpeaking(true);
-              const ctx = outputAudioContextRef.current;
-              nextStartTimeRef.current = Math.max(nextStartTimeRef.current, ctx.currentTime);
-              const buffer = await decodeAudioData(decode(audio), ctx, 24000, 1);
-              const source = ctx.createBufferSource();
-              source.buffer = buffer;
-              source.connect(ctx.destination);
-              source.onended = () => {
-                sourcesRef.current.delete(source);
-                if (sourcesRef.current.size === 0) setIsModelSpeaking(false);
-              };
-              source.start(nextStartTimeRef.current);
-              nextStartTimeRef.current += buffer.duration;
-              sourcesRef.current.add(source);
-            }
-            if (m.serverContent?.turnComplete) {
-              processOrderTag(currentTranscription);
-              setMessages(p => [...p, 
-                { role: 'user', text: userInputTranscription || "Voice", timestamp: new Date() }, 
-                { role: 'model', text: currentTranscription || "Response", timestamp: new Date() }
-              ]);
-              setCurrentTranscription(''); 
-              setUserInputTranscription('');
-            }
-          },
-          onerror: (e) => console.error(e),
-          onclose: () => stopSession()
-        },
-        config: {
-          responseModalities: [Modality.AUDIO],
-          systemInstruction: SYSTEM_INSTRUCTION,
-          speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } } },
-          outputAudioTranscription: {}, inputAudioTranscription: {}
-  }
+     
 
 sessionRef.current = await sessionPromise;
 
