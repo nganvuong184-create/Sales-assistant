@@ -49,7 +49,7 @@ const App: React.FC = () => {
 
 const startSession = async () => {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+   const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY });
 
     inputAudioContextRef.current = new AudioContext({ sampleRate: 16000 });
     outputAudioContextRef.current = new AudioContext({ sampleRate: 24000 });
