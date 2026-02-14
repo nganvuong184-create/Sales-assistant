@@ -47,22 +47,6 @@ const App: React.FC = () => {
     }
   };
 
-  const sessionPromise = ai.startRealtimeSession({
-  model: "gemini-1.5-flash",
-  inputAudioFormat: inputAudioContextRef.current.sampleRate,
-  outputAudioFormat: outputAudioContextRef.current.sampleRate,
-  onerror: (e) => console.error(e),
-  onclose: () => stopSession(),
-  config: {
-    responseModalities: [Modality.AUDIO],
-    systemInstruction: SYSTEM_INSTRUCTION,
-    speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } } },
-    outputAudioTranscription: {},
-    inputAudioTranscription: {}
-  }
-});
-
-
 const startSession = async () => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
