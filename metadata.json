@@ -1,0 +1,7 @@
+{
+  "name": "Cao Bang Local Guide AI",
+  "description": "An interactive voice-enabled AI companion for tourists exploring Cao Bang, Vietnam, specializing in local food and culture recommendations using Gemini 2.5 Live API.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
